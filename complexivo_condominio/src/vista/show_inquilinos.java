@@ -1,0 +1,245 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package vista;
+
+import controlador.FileHandler;
+import java.io.IOException;
+import java.util.LinkedList;
+import javax.swing.table.DefaultTableModel;
+import modelo.condominio;
+import modelo.inq_adulto;
+import modelo.inq_hijo;
+import modelo.inquilino;
+
+/**
+ *
+ * @author hack2
+ */
+public class show_inquilinos extends javax.swing.JFrame {
+
+    private static main InterfazPrincipal ;
+    private condominio EmpresaCondominio;
+    private FileHandler handlerFile;
+    
+    /**
+     * Creates new form show_inquilinos
+     */
+    public show_inquilinos(main m) {
+        initComponents();
+        InterfazPrincipal = m;
+        
+        
+        EmpresaCondominio = new condominio();
+        
+        // aqui salvo y cargo de los ficheros
+        handlerFile = new FileHandler();
+        
+        try {
+            EmpresaCondominio.pushInquilinos(handlerFile.LoadInquilinosAdultos());
+        } catch (IOException ex) {
+            System.out.println("Aun no existe el archivo a ser cargado de inquilinos adultos");
+        } catch (ClassNotFoundException ex) {
+            System.out.println("Error en tipo de dato a cargar de inquilinos adultos");
+        }
+        
+        try {
+            EmpresaCondominio.pushInquilinos(handlerFile.LoadInquilinosHijos());
+        } catch (IOException ex) {
+            System.out.println("Aun no existe el archivo a ser cargado de inquilinos hijos");
+        } catch (ClassNotFoundException ex) {
+            System.out.println("Error en tipo de dato a cargar de inquilinos hijos");
+        }
+        
+        try {
+            EmpresaCondominio.pushInquilinos(handlerFile.LoadInquilinosAdultosMayores());
+        } catch (IOException ex) {
+            System.out.println("Aun no existe el archivo a ser cargado de inquilinos adultos mayores");
+        } catch (ClassNotFoundException ex) {
+            System.out.println("Error en tipo de dato a cargar de inquilinos adultos mayores");
+        }
+        
+       
+        
+        if(EmpresaCondominio!=null){
+            System.out.println("Existen los datos y son");
+            DefaultTableModel model = (DefaultTableModel) jtableresultados.getModel(); // obtengo el table al que metere datos
+            
+             EmpresaCondominio.ImprimoInquilinos();
+            LinkedList<inquilino> componentes_imprimir = EmpresaCondominio.getInquilinos();
+            
+            for(inquilino object : componentes_imprimir) {
+                String tipo_componente=object.getClass().getSimpleName();
+                
+                if(tipo_componente.toLowerCase().trim().equals("inq_adulto")){
+                    inq_adulto adultotemp = (inq_adulto) object;
+                    
+                    String casado;
+                    
+                    if(adultotemp.isIs_casado()){
+                        casado="SI";
+                    }else{
+                        casado="NO";
+                    }
+                    
+                    Object[] row = { tipo_componente,object.getNombre(),object.getCi(),casado,"NO APLICA"};
+                    model.addRow(row);
+                    
+                }else if(tipo_componente.toLowerCase().trim().equals("inq_hijo")){
+                    inq_hijo hijotemp = (inq_hijo) object;
+                    
+                    String resultado_escolaridad="Error valor no valido de "+hijotemp.getNivel_escolaridad();
+                    switch(hijotemp.getNivel_escolaridad()){
+                        case 1:
+                            resultado_escolaridad = "Preparatoria";
+                        break;
+                        
+                        case 2:
+                            resultado_escolaridad = "Elemental";
+                        break;
+                        
+                        case 3:
+                            resultado_escolaridad = "Media";
+                        break;
+                        
+                        case 4:
+                           resultado_escolaridad = "Superior"; 
+                        break;
+                        
+                    }
+                    Object[] row = { tipo_componente,object.getNombre(),object.getCi(),"NO APLICA",resultado_escolaridad};
+                    model.addRow(row);
+                }else if(tipo_componente.toLowerCase().trim().equals("inq_adulto_mayor")){
+                    Object[] row = { tipo_componente,object.getNombre(),object.getCi(),"NO APLICA","NO APLICA"};
+                    model.addRow(row);
+                }
+            }
+        }
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        javax.swing.JButton regresar = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jtableresultados = new javax.swing.JTable();
+        jLabel1 = new javax.swing.JLabel();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
+
+        regresar.setText("Regresar");
+        regresar.setToolTipText("");
+        regresar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                regresarActionPerformed(evt);
+            }
+        });
+
+        jtableresultados.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Tipo", "Nombre", "CI", "Casado", "Nivel Escolaridad"
+            }
+        ));
+        jScrollPane1.setViewportView(jtableresultados);
+
+        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setText("Inquilinos del condominio");
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(regresar, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 645, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(regresar, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        // TODO add your handling code here:
+        InterfazPrincipal.setVisible(true);
+    }//GEN-LAST:event_formWindowClosing
+
+    private void regresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_regresarActionPerformed
+        // TODO add your handling code here:
+        InterfazPrincipal.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_regresarActionPerformed
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(show_inquilinos.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(show_inquilinos.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(show_inquilinos.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(show_inquilinos.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new show_inquilinos(InterfazPrincipal).setVisible(true);
+            }
+        });
+    }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable jtableresultados;
+    // End of variables declaration//GEN-END:variables
+}
